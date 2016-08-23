@@ -1,0 +1,78 @@
+{
+    "family": "Frontend-Nginx-PHP",
+    "taskRoleArn": "",
+    "networkMode": "bridge",
+    "containerDefinitions": [
+        {
+            "name": "nginx",
+            "image": "nginx:latest",
+            "memory": 512,
+            "essential": true,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80
+                },
+                {
+                    "containerPort": 443,
+                    "hostPort": 443
+                }
+            ],
+            "links": [
+                "php"
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "frontend-code",
+                    "containerPath": "/var/www/htdocs/"
+                },
+                {
+                    "sourceVolume": "nginx-config",
+                    "containerPath": "/etc/nginx/nginx.conf"
+                },
+                {
+                    "sourceVolume": "nginx-site-configs",
+                    "containerPath": "/etc/nginx/siteConf.d"
+                }
+            ]
+        },
+        {
+            "name": "php",
+            "image": "php:7-fpm",
+            "memory": 512,
+            "essential": true,
+            "portMappings": [
+                {
+                    "containerPort": 9000,
+                    "hostPort": 9000
+                }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "frontend-code",
+                    "containerPath": "/var/www/htdocs/"
+                }
+            ]
+        }
+    ],
+    "volumes": [
+        {
+            "name": "frontend-code",
+            "host": {
+                "sourcePath": "/home/ec2-user/docker/site"
+            }
+        },
+        {
+            "name": "nginx-config",
+            "host": {
+                "sourcePath": "/home/ec2-user/docker/configs/nginx/nginx.conf"
+            }
+        },
+        {
+            "name": "nginx-site-configs",
+            "host": {
+                "sourcePath": "/home/ec2-user/docker/configs/nginx/siteConf.d"
+            }
+        }
+    ]
+}
